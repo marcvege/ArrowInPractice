@@ -1,15 +1,13 @@
 package com.fortysevendeg.arrowinpractice.workshop.ex1
 
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.toOption
+import arrow.core.*
 import arrow.effects.IO
 import arrow.effects.instances.io.monad.monad
 import arrow.typeclasses.binding
 import com.fortysevendeg.arrowinpractice.database.CastlesDatabase
 import com.fortysevendeg.arrowinpractice.database.CharactersDatabase
 import com.fortysevendeg.arrowinpractice.database.HousesDatabase
+import com.fortysevendeg.arrowinpractice.error.InvalidIdException
 import com.fortysevendeg.arrowinpractice.error.NotFoundException
 import com.fortysevendeg.arrowinpractice.model.Character
 import com.fortysevendeg.arrowinpractice.model.HouseLocation
@@ -24,12 +22,15 @@ fun paramOf(name: String, call: ApplicationCall): Option<String> =
 
 fun IO.Companion.idOrNotFound(maybeId: Option<String>): IO<String> =
     when (maybeId) {
-        is Some -> IO.just(maybeId.t)
-        is None -> IO.raiseError(NotFoundException())
+        is Some -> just(maybeId.t)
+        is None -> raiseError(NotFoundException())
     }
 
 fun IO.Companion.stringIdToLong(id: String): IO<Long> =
-  TODO()
+        Try { id.toLong() }
+                .fold({ raiseError(InvalidIdException()) },
+                        { it -> just(it) })
+
 
 fun IO.Companion.fetchCharacterById(charactersDB: CharactersDatabase, characterId: Long): IO<Character> =
   TODO()
