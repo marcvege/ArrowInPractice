@@ -27,15 +27,17 @@ fun IO.Companion.idOrNotFound(maybeId: Option<String>): IO<String> =
     }
 
 fun IO.Companion.stringIdToLong(id: String): IO<Long> =
-        Try { id.toLong() }
-                .fold({ raiseError(InvalidIdException()) },
-                        { it -> just(it) })
+    Try { id.toLong() }.fold(
+            { raiseError(InvalidIdException()) },
+            { it -> just(it) }
+    )
 
 
 fun IO.Companion.fetchCharacterById(charactersDB: CharactersDatabase, characterId: Long): IO<Character> =
-  charactersDB.getById(characterId)
-          .fold({ IO.raiseError(NotFoundException())},
-                  { it -> IO.just(it)})
+  charactersDB.getById(characterId).fold(
+          { IO.raiseError(NotFoundException())},
+          { it -> IO.just(it)}
+  )
 
 fun IO.Companion.handleDBExceptions(charactersFetch: IO<Character>): IO<Character> =
   TODO()
