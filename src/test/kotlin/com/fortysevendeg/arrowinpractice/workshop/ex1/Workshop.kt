@@ -5,14 +5,11 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.toOption
 import arrow.effects.IO
-import arrow.effects.handleErrorWith
 import arrow.effects.instances.io.monad.monad
-import arrow.instances.option.applicative.map
 import arrow.typeclasses.binding
 import com.fortysevendeg.arrowinpractice.database.CastlesDatabase
 import com.fortysevendeg.arrowinpractice.database.CharactersDatabase
 import com.fortysevendeg.arrowinpractice.database.HousesDatabase
-import com.fortysevendeg.arrowinpractice.error.InvalidIdException
 import com.fortysevendeg.arrowinpractice.error.NotFoundException
 import com.fortysevendeg.arrowinpractice.model.Character
 import com.fortysevendeg.arrowinpractice.model.HouseLocation
@@ -26,7 +23,10 @@ fun paramOf(name: String, call: ApplicationCall): Option<String> =
   call.parameters[name].toOption()
 
 fun IO.Companion.idOrNotFound(maybeId: Option<String>): IO<String> =
-  TODO()
+    when (maybeId) {
+        is Some -> IO.just(maybeId.t)
+        is None -> IO.raiseError(NotFoundException())
+    }
 
 fun IO.Companion.stringIdToLong(id: String): IO<Long> =
   TODO()
