@@ -33,7 +33,9 @@ fun IO.Companion.stringIdToLong(id: String): IO<Long> =
 
 
 fun IO.Companion.fetchCharacterById(charactersDB: CharactersDatabase, characterId: Long): IO<Character> =
-  TODO()
+  charactersDB.getById(characterId)
+          .fold({ IO.raiseError(NotFoundException())},
+                  { it -> IO.just(it)})
 
 fun IO.Companion.handleDBExceptions(charactersFetch: IO<Character>): IO<Character> =
   TODO()
