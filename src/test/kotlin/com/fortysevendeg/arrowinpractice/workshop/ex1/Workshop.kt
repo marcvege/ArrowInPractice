@@ -1,6 +1,8 @@
 package com.fortysevendeg.arrowinpractice.workshop.ex1
 
+import arrow.core.None
 import arrow.core.Option
+import arrow.core.Some
 import arrow.core.toOption
 import arrow.effects.IO
 import arrow.effects.handleErrorWith
@@ -21,7 +23,7 @@ import io.ktor.auth.authenticate
 import io.ktor.routing.Routing
 
 fun paramOf(name: String, call: ApplicationCall): Option<String> =
-  TODO()
+  call.parameters[name].toOption()
 
 fun IO.Companion.idOrNotFound(maybeId: Option<String>): IO<String> =
   TODO()
