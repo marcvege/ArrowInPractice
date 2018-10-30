@@ -2,6 +2,7 @@ package com.fortysevendeg.arrowinpractice.workshop.ex1
 
 import arrow.core.*
 import arrow.effects.IO
+import arrow.effects.handleErrorWith
 import arrow.effects.instances.io.monad.monad
 import arrow.typeclasses.binding
 import com.fortysevendeg.arrowinpractice.database.CastlesDatabase
@@ -40,7 +41,12 @@ fun IO.Companion.fetchCharacterById(charactersDB: CharactersDatabase, characterI
   )
 
 fun IO.Companion.handleDBExceptions(charactersFetch: IO<Character>): IO<Character> =
-  TODO()
+  charactersFetch.handleErrorWith {
+      when (it){
+          is NotFoundException -> charactersFetch
+          else  -> IO.raiseError(InvalidIdException())
+      }
+  }
 
 fun IO.Companion.houseAndLocationEndpoint(
   housesDB: HousesDatabase,
