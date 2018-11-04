@@ -53,7 +53,14 @@ fun IO.Companion.houseAndLocationEndpoint(
   castlesDB: CastlesDatabase,
   houseId: Long,
   castleId: Long): IO<HouseLocation> =
-  TODO()
+     housesDB[houseId].toOption().fold(
+            { raiseError(NotFoundException())},
+            {house -> castlesDB[castleId].toOption().fold(
+                    { raiseError(NotFoundException())},
+                    { castle -> just(HouseLocation(house, castle))}
+            ) }
+    )
+
 
 /**
  * GET: Provides the character details for a given character Id.
