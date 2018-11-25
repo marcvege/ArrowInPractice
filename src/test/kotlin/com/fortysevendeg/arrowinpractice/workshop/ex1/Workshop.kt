@@ -4,6 +4,8 @@ import arrow.core.*
 import arrow.effects.IO
 import arrow.effects.handleErrorWith
 import arrow.effects.instances.io.monad.monad
+import arrow.instances.option.applicative.applicative
+import arrow.instances.option.foldable.fold
 import arrow.typeclasses.binding
 import com.fortysevendeg.arrowinpractice.database.CastlesDatabase
 import com.fortysevendeg.arrowinpractice.database.CharactersDatabase
@@ -53,14 +55,11 @@ fun IO.Companion.houseAndLocationEndpoint(
   castlesDB: CastlesDatabase,
   houseId: Long,
   castleId: Long): IO<HouseLocation> =
-     housesDB[houseId].toOption().fold(
-            { raiseError(NotFoundException())},
-            {house -> castlesDB[castleId].toOption().fold(
-                    { raiseError(NotFoundException())},
-                    { castle -> just(HouseLocation(house, castle))}
-            ) }
-    )
-
+        arrow.instances.option.applicative.map(housesDB[houseId].toOption(), castlesDB[castleId].toOption())
+        { (house, castle) -> HouseLocation(house, castle) } 
+                .fold({ raiseError(NotFoundException()) }) {
+                                just(it)
+        }
 
 /**
  * GET: Provides the character details for a given character Id.
